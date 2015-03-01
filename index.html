@@ -1,0 +1,356 @@
+<html>
+	<head>
+		<script src="jquery.js"></script>
+	</head>
+	<body>
+		<canvas width="800px" height="600px" id="mainFrame"></canvas>
+
+
+		<script>
+			fCvas = document.getElementById("mainFrame");
+			fBox = fCvas.getContext("2d");
+
+			Functions = {
+				Close: "close",
+				Minimize: "minimize",
+				Color_red: "color_red",
+				Color_blue: "color_blue",
+				Color_green: "color_green"
+			};
+
+			Windows = [];
+
+			Window = {
+				x: 100,
+				y: 100,
+				width: 300,
+				height: 450,
+				title: "Window 1",
+				Buttons: []
+			}
+
+			Button = {
+				x: Window.width - 22.5,
+				y: 2,
+				width: 20,
+				height: 20,
+				action: Functions.Close,
+				label: "x",
+				background: "white"
+			}
+
+			Window.Buttons.push(Button)
+
+			Button = {
+				x: Window.width - 44.5,
+				y: 2,
+				width: 20,
+				height: 20,
+				action: Functions.Minimize,
+				label: "_",
+				background: "white"
+			}
+
+			Window.Buttons.push(Button)
+
+			Button = {
+				x: 22.5,
+				y: 100,
+				width: 50,
+				height: 50,
+				action: Functions.Color_green,
+				label: "Green",
+				background: "green"
+			}
+
+			Window.Buttons.push(Button)
+
+			Button = {
+				x: 22.5,
+				y: 160,
+				width: 50,
+				height: 50,
+				action: Functions.Color_red,
+				label: "Red",
+				background: "red"
+			}
+
+			Window.Buttons.push(Button)
+
+			Button = {
+				x: 22.5,
+				y: 220,
+				width: 50,
+				height: 50,
+				action: Functions.Color_blue,
+				label: "Blue",
+				background: "blue"
+			}
+
+			Window.Buttons.push(Button)
+
+			Windows.push(Window);
+
+			Window = {
+				x: 350,
+				y: 100,
+				width: 300,
+				height: 450,
+				title: "Window 2",
+				Buttons: []
+			}
+
+			Button = {
+				x: Window.width - 22.5,
+				y: 2,
+				width: 20,
+				height: 20,
+				action: Functions.Close,
+				label: "x",
+				background: "white"
+			}
+
+			Window.Buttons.push(Button)
+
+			Button = {
+				x: Window.width - 44.5,
+				y: 2,
+				width: 20,
+				height: 20,
+				action: Functions.Minimize,
+				label: "_",
+				background: "white"
+			}
+
+			Window.Buttons.push(Button)
+
+			Windows.push(Window);
+
+			var choosen = false;
+
+			$().ready(function () {
+				window.addEventListener("mousemove", mouseHover, false);
+				window.addEventListener("click", mouseClick, false);
+
+				for(Window in Windows)
+				{
+					for(cB in Windows[Window].Buttons)
+					{
+						fBox.strokeRect(Windows[Window].x + Windows[Window].Buttons[cB].x, Windows[Window].y + Windows[Window].Buttons[cB].y, Windows[Window].Buttons[cB].width, Windows[Window].Buttons[cB].height);
+
+						fBox.fillStyle = Windows[Window].Buttons[cB].background;
+						fBox.fillRect(Windows[Window].x + Windows[Window].Buttons[cB].x + 1, Windows[Window].x + Windows[Window].Buttons[cB].y + 1, Windows[Window].Buttons[cB].width - 2, Windows[Window].Buttons[cB].height - 2);
+
+						fBox.strokeText(Windows[Window].Buttons[cB].label, Windows[Window].x + Windows[Window].Buttons[cB].x+8, Windows[Window].y + Windows[Window].Buttons[cB].y+12);
+					}
+					fBox.strokeRect(Windows[Window].x, Windows[Window].y, Windows[Window].width, Windows[Window].height);            		
+            		fBox.strokeText(Windows[Window].title, Windows[Window].x + 10, Windows[Window].y + 18);
+            		fBox.strokeRect(Windows[Window].x, Windows[Window].y + 25, Windows[Window].width, 1);
+				}
+			});
+
+			function inRange(object1, x, y)
+			{
+				if(object1 && x && y)
+				{
+					if(x >= object1.x && x <= object1.x + object1.width && y >= object1.y && y <= object1.y + 25)
+					{
+						fBox.strokeRect(object1.x, object1.y, 25, 25);
+						return true;
+					}	
+				}
+			}
+
+			function mouseHover(e)
+			{
+				mX = e.clientX + document.body.scrollLeft + document.documentElement.scrollLeft - fCvas.offsetLeft;
+            	mY = e.clientY + document.body.scrollTop + document.documentElement.scrollTop - fCvas.offsetLeft;
+
+
+            	fBox.clearRect(0, 0, 800, 600);
+
+            	for(Window in Windows)
+            	{
+            		if(choosen == true)
+            		{
+            			if(Window == currentWindow)
+            			{
+            				fBox.strokeRect(Windows[Window].x - (foundX - mX), Windows[Window].y - (foundY - mY), Windows[Window].width, Windows[Window].height);
+
+							fBox.fillStyle = background_color;
+							fBox.fillRect(Windows[Window].x + 1 - (foundX - mX), Windows[Window].y + 1 - (foundY - mY), Windows[Window].width - 2, Windows[Window].height - 2);
+
+		            		fBox.strokeText(Windows[Window].title, Windows[Window].x + 10 - (foundX - mX), Windows[Window].y + 18 - (foundY - mY));
+		            		fBox.strokeRect(Windows[Window].x - (foundX - mX), Windows[Window].y + 25 - (foundY - mY), Windows[Window].width, 1);
+            				for(cB in Windows[Window].Buttons)
+							{
+								fBox.strokeRect(Windows[Window].x - (foundX - mX) + Windows[Window].Buttons[cB].x, Windows[Window].y - (foundY - mY) + Windows[Window].Buttons[cB].y, Windows[Window].Buttons[cB].width, Windows[Window].Buttons[cB].height);
+								
+								fBox.fillStyle = Windows[Window].Buttons[cB].background;
+								fBox.fillRect(Windows[Window].x + 1 - (foundX - mX) + Windows[Window].Buttons[cB].x, Windows[Window].y + 1 - (foundY - mY) + Windows[Window].Buttons[cB].y, Windows[Window].Buttons[cB].width - 2, Windows[Window].Buttons[cB].height - 2);
+
+								fBox.strokeText(Windows[Window].Buttons[cB].label, Windows[Window].x - (foundX - mX) + Windows[Window].Buttons[cB].x+8, Windows[Window].y - (foundY - mY) + Windows[Window].Buttons[cB].y+12);
+							}
+		            	} else {
+		            		fBox.strokeRect(Windows[Window].x, Windows[Window].y, Windows[Window].width, Windows[Window].height);
+
+		            		fBox.fillStyle = background_color;
+							fBox.fillRect(Windows[Window].x + 1, Windows[Window].y + 1, Windows[Window].width - 2, Windows[Window].height - 2);
+
+		            		fBox.strokeText(Windows[Window].title, Windows[Window].x + 10, Windows[Window].y + 18);
+		            		fBox.strokeRect(Windows[Window].x, Windows[Window].y + 25, Windows[Window].width, 1);
+		            		for(cB in Windows[Window].Buttons)
+							{
+								fBox.strokeRect(Windows[Window].x + Windows[Window].Buttons[cB].x, Windows[Window].y + Windows[Window].Buttons[cB].y, Windows[Window].Buttons[cB].width, Windows[Window].Buttons[cB].height);
+
+								fBox.fillStyle = Windows[Window].Buttons[cB].background;
+								fBox.fillRect(Windows[Window].x + Windows[Window].Buttons[cB].x + 1, Windows[Window].y + Windows[Window].Buttons[cB].y + 1, Windows[Window].Buttons[cB].width - 2, Windows[Window].Buttons[cB].height - 2);
+
+								fBox.strokeText(Windows[Window].Buttons[cB].label, Windows[Window].x + Windows[Window].Buttons[cB].x+8, Windows[Window].y + Windows[Window].Buttons[cB].y+12);
+							}
+		            	}
+            		} else if(choosen == false) {
+            			fBox.strokeRect(Windows[Window].x, Windows[Window].y, Windows[Window].width, Windows[Window].height);
+            			fBox.fillStyle = background_color;
+							fBox.fillRect(Windows[Window].x + 1, Windows[Window].y + 1, Windows[Window].width - 2, Windows[Window].height - 2);
+	            		fBox.strokeText(Windows[Window].title, Windows[Window].x + 10, Windows[Window].y + 18);
+	            		fBox.strokeRect(Windows[Window].x, Windows[Window].y + 25, Windows[Window].width, 1);
+            			for(cB in Windows[Window].Buttons)
+						{
+							fBox.strokeRect(Windows[Window].x + Windows[Window].Buttons[cB].x, Windows[Window].y + Windows[Window].Buttons[cB].y, Windows[Window].Buttons[cB].width, Windows[Window].Buttons[cB].height);
+
+							fBox.fillStyle = Windows[Window].Buttons[cB].background;
+							fBox.fillRect(Windows[Window].x + Windows[Window].Buttons[cB].x + 1, Windows[Window].y + Windows[Window].Buttons[cB].y + 1, Windows[Window].Buttons[cB].width - 2, Windows[Window].Buttons[cB].height - 2);
+
+							fBox.strokeText(Windows[Window].Buttons[cB].label, Windows[Window].x + Windows[Window].Buttons[cB].x+8, Windows[Window].y + Windows[Window].Buttons[cB].y+12);
+						}
+            		}
+            	}
+
+            	for(Mini in MinimizedButtons)
+				{
+					fBox.strokeRect(MinimizedButtons[Mini].x, MinimizedButtons[Mini].y, MinimizedButtons[Mini].width, MinimizedButtons[Mini].height);
+					fBox.strokeText(MinimizedButtons[Mini].title, MinimizedButtons[Mini].x + 10, MinimizedButtons[Mini].y+18);
+				}
+
+            	fBox.strokeRect(mX, mY, 5, 5);
+			}
+
+			var foundX, foundY;
+			var currentWindow = null;
+
+			Minimized = [];
+			MinimizedButtons = [];
+
+			background_color = "white";
+
+			function mouseClick(e)
+			{
+				mX = e.clientX + document.body.scrollLeft + document.documentElement.scrollLeft - fCvas.offsetLeft;
+            	mY = e.clientY + document.body.scrollTop + document.documentElement.scrollTop - fCvas.offsetLeft;
+
+            	fBox.strokeRect(mX, mY, 15, 15);
+
+            	if(choosen == false)
+            	{
+            		for(Mini in MinimizedButtons)
+            		{
+            			if(MinimizedButtons.length > 0)
+	            		{
+	            			if(inRange(MinimizedButtons[Mini], mX, mY))
+	            			{
+		            			Windows.push(Minimized[Mini]);
+		            			Minimized.splice(Mini, 1);
+		            			MinimizedButtons.splice(Mini, 1);
+		            			for(i = Mini; i < Minimized.length; i++)
+		            			{
+		            				MinimizedButtons[i].x -= 80;
+		            			}
+		            		}
+	            		}
+            		}
+
+	            	for(Window in Windows)
+	            	{
+	            		closed = false;
+	            		if(Windows[Window].Buttons.length > 0)
+	            		{
+		            		for(cB in Windows[Window].Buttons)
+		            		{
+		            			tmpButton = {
+		            				x: parseInt(Windows[Window].x + Windows[Window].Buttons[cB].x),
+		            				y: parseInt(Windows[Window].y + Windows[Window].Buttons[cB].y),
+		            				width: Windows[Window].Buttons[cB].width,
+		            				height: Windows[Window].Buttons[cB].height,
+		            				action: Windows[Window].Buttons[cB].action
+		            			};
+
+		            			if(inRange(tmpButton, mX, mY) == true)
+		            			{
+		            				switch(tmpButton.action)
+		            				{
+		            					case "close":
+		            					console.log("Closing");
+		            					delete Windows[Window];
+		            					closed = true;
+		            					break;
+		            					case "minimize":
+		            					console.log("Minimizing")
+		            					MinimizedButton = {
+		            						x: 80*MinimizedButtons.length,
+		            						y: 560,
+		            						width: 80,
+		            						height: 30,
+		            						title: Windows[Window].title
+		            					};
+
+		            					MinimizedButtons.push(MinimizedButton);
+		            					Minimized.push(Windows[Window]);
+		            					delete Windows[Window];
+		            					break;
+
+		            					case "color_red":
+		            					background_color = "red";
+		            					break;
+
+		            					case "color_blue":
+		            					background_color = "blue";
+		            					break;
+
+		            					case "color_green":
+		            					background_color = "green";
+		            					break;
+		            				}
+		            			}
+		            		}
+		            	}
+
+	            		if(closed)
+	            		{
+	            			break;
+	            		}
+
+	            		if(inRange(Windows[Window], mX, mY) == true)
+	            		{
+	            			foundX = mX;
+	            			foundY = mY;
+
+	            			console.log("Found");
+	            			choosen = true;
+	            			currentWindow = parseInt(Window);
+	            			console.log(currentWindow);
+	            			break;
+	            		} else {
+	            			console.log("Not found");
+	            		}
+	            	}
+	            } else {
+	            	Windows[currentWindow].x = Windows[currentWindow].x - (foundX - mX);
+	            	Windows[currentWindow].y = Windows[currentWindow].y - (foundY - mY);
+	            	choosen = false;
+	            }
+			}
+
+		</script>
+	</body>
+</html>
