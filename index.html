@@ -128,6 +128,8 @@
 			Windows.push(Window);
 
 			var choosen = false;
+			var stretchBottom = false;
+			var stretchRight = false;
 
 			$().ready(function () {
 				window.addEventListener("mousemove", mouseHover, false);
@@ -224,6 +226,40 @@
 							fBox.fillRect(Windows[Window].x + Windows[Window].Buttons[cB].x + 1, Windows[Window].y + Windows[Window].Buttons[cB].y + 1, Windows[Window].Buttons[cB].width - 2, Windows[Window].Buttons[cB].height - 2);
 
 							fBox.strokeText(Windows[Window].Buttons[cB].label, Windows[Window].x + Windows[Window].Buttons[cB].x+8, Windows[Window].y + Windows[Window].Buttons[cB].y+12);
+						}
+
+						if(mX >= Windows[Window].x - 5 && mX <= Windows[Window].x + 5 && mY >= Windows[Window].y && mY <= Windows[Window].y + Windows[Window].height ||
+							mX >= Windows[Window].x + Windows[Window].width - 5 && mX <= Windows[Window].x + Windows[Window].width + 5 && mY >= Windows[Window].y && mY <= Windows[Window].y + Windows[Window].height)
+						{
+							fBox.strokeRect(mX, mY, 10, 2);
+						} 
+						else if(mY >= Windows[Window].y + Windows[Window].height - 5 && mY <= Windows[Window].y + Windows[Window].height + 5 && mX >= Windows[Window].x && mY <= Windows[Window].x + Windows[Window].width)
+						{
+							fBox.strokeRect(mX, mY, 2, 10);
+						}
+
+						if(Window == currentWindow)
+						{
+							if(stretchBottom == true)
+							{
+								Windows[Window].height = Windows[Window].height + (mY - (Windows[Window].y + Windows[Window].height));
+							}
+
+							if(stretchRight == true)
+							{
+								Windows[Window].width = Windows[Window].width + (mX - (Windows[Window].x + Windows[Window].width));
+
+								for(cB in Windows[Window].Buttons)
+								{
+									if(Windows[Window].Buttons[cB].action = "minimize")
+									{
+										Windows[Window].Buttons[cB].x = Windows[Window].width - 44.5;
+									} else if(Windows[Window].Buttons[cB].action == "close")
+									{
+										Windows[Window].Buttons[cB].x = Windows[Window].width - 43.5;
+									}
+								}
+							}
 						}
             		}
             	}
@@ -325,6 +361,45 @@
 		            			}
 		            		}
 		            	}
+
+		            	if(mX >= Windows[Window].x - 5 && mX <= Windows[Window].x + 5 && mY >= Windows[Window].y && mY <= Windows[Window].y + Windows[Window].height)
+						{
+							if(stretchLeft == true)
+				            {
+				            	stretchLeft = false;
+				            	console.log("Not stretching left");
+				            } else {
+								stretchLeft = true
+								currentX = Windows[Window].x;
+								currentWindow = parseInt(Window);
+								console.log("Stretch left");
+				            }
+						} 
+						else if(mX >= Windows[Window].x + Windows[Window].width - 5 && mX <= Windows[Window].x + Windows[Window].width + 5 && mY >= Windows[Window].y && mY <= Windows[Window].y + Windows[Window].height)
+						{
+							if(stretchRight == true)
+				            {
+				            	stretchRight = false;
+				            	console.log("Not stretching right");
+				            } else {
+								stretchRight = true
+								currentX = Windows[Window].x;
+								currentWindow = parseInt(Window);
+								console.log("Stretch right");
+				            }
+						}
+						else if(mY >= Windows[Window].y + Windows[Window].height - 5 && mY <= Windows[Window].y + Windows[Window].height + 5 && mX >= Windows[Window].x && mY <= Windows[Window].x + Windows[Window].width)
+						{
+							if(stretchBottom == true)
+				            {
+				            	stretchBottom = false;
+				            	console.log("Not stretching bottom");
+				            } else {
+								stretchBottom = true;
+								currentWindow = parseInt(Window);
+								console.log("Stretch bottom");
+				            }
+						}
 
 	            		if(closed)
 	            		{
