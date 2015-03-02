@@ -1,6 +1,7 @@
 <html>
 	<head>
 		<script src="jquery.js"></script>
+		<script src="jscript.js"></script>
 	</head>
 	<body>
 		<canvas width="800px" height="600px" id="mainFrame"></canvas>
@@ -336,8 +337,9 @@
 	            			foundY = mY;
 
 	            			console.log("Found");
+	            			arraymove(Windows, parseInt(Window), Windows.length);
 	            			choosen = true;
-	            			currentWindow = parseInt(Window);
+	            			currentWindow = Windows.length -1;//parseInt(Window);
 	            			console.log(currentWindow);
 	            			break;
 	            		} else {
