@@ -21,111 +21,77 @@
 
 			Windows = [];
 
-			Window = {
-				x: 100,
-				y: 100,
-				width: 300,
-				height: 450,
-				title: "Window 1",
-				Buttons: []
+			function createWindow(x, y, width, height, title)
+			{
+				var Window = {
+					x: x,
+					y: y,
+					width: width,
+					height: height,
+					title: title,
+					Buttons: []
+				}
+
+				for(Wnd in Windows)
+				{
+					if(Windows[Wnd].title == title)
+					{
+						return 0;
+					}
+				}
+
+				var Button = {
+					x: width - 22.5,
+					y: 2,
+					width: 20,
+					height: 20,
+					action: Functions.Close,
+					label: "x",
+					background: "white"
+				}
+
+				Window.Buttons.push(Button)
+
+				var Button = {
+					x: width - 44.5,
+					y: 2,
+					width: 20,
+					height: 20,
+					action: Functions.Minimize,
+					label: "_",
+					background: "white"
+				}
+
+				Window.Buttons.push(Button)
+
+				Windows.push(Window);
 			}
 
-			Button = {
-				x: Window.width - 22.5,
-				y: 2,
-				width: 20,
-				height: 20,
-				action: Functions.Close,
-				label: "x",
-				background: "white"
+			function addButton(title, x, y, width, height, action, label, background)
+			{
+				for(Window in Windows)
+				{
+					if(Windows[Window].title == title)
+					{
+						var Button = {
+							x: x,
+							y: y,
+							width: width,
+							height: height,
+							action: action,
+							label: label,
+							background: background
+						}
+						Windows[Window].Buttons.push(Button);
+					}
+				}
 			}
 
-			Window.Buttons.push(Button)
-
-			Button = {
-				x: Window.width - 44.5,
-				y: 2,
-				width: 20,
-				height: 20,
-				action: Functions.Minimize,
-				label: "_",
-				background: "white"
-			}
-
-			Window.Buttons.push(Button)
-
-			Button = {
-				x: 22.5,
-				y: 100,
-				width: 50,
-				height: 50,
-				action: Functions.Color_green,
-				label: "Green",
-				background: "green"
-			}
-
-			Window.Buttons.push(Button)
-
-			Button = {
-				x: 22.5,
-				y: 160,
-				width: 50,
-				height: 50,
-				action: Functions.Color_red,
-				label: "Red",
-				background: "red"
-			}
-
-			Window.Buttons.push(Button)
-
-			Button = {
-				x: 22.5,
-				y: 220,
-				width: 50,
-				height: 50,
-				action: Functions.Color_blue,
-				label: "Blue",
-				background: "blue"
-			}
-
-			Window.Buttons.push(Button)
-
-			Windows.push(Window);
-
-			Window = {
-				x: 350,
-				y: 100,
-				width: 300,
-				height: 450,
-				title: "Window 2",
-				Buttons: []
-			}
-
-			Button = {
-				x: Window.width - 22.5,
-				y: 2,
-				width: 20,
-				height: 20,
-				action: Functions.Close,
-				label: "x",
-				background: "white"
-			}
-
-			Window.Buttons.push(Button)
-
-			Button = {
-				x: Window.width - 44.5,
-				y: 2,
-				width: 20,
-				height: 20,
-				action: Functions.Minimize,
-				label: "_",
-				background: "white"
-			}
-
-			Window.Buttons.push(Button)
-
-			Windows.push(Window);
+			createWindow(100, 100, 300, 450, "Window 1");
+			createWindow(350, 100, 300, 450, "Window 2");
+			addButton("Window 1", 22.5, 220, 50, 50, Functions.Color_blue, "Blue", "blue");
+			addButton("Window 1", 22.5, 100, 50, 50, Functions.Color_red, "Red", "red");
+			addButton("Window 1", 22.5, 160, 50, 50, Functions.Color_green, "Green", "green");
 
 			var choosen = false;
 			var stretchBottom = false;
@@ -251,12 +217,13 @@
 
 								for(cB in Windows[Window].Buttons)
 								{
-									if(Windows[Window].Buttons[cB].action = "minimize")
+									if(Windows[Window].Buttons[cB].action == "minimize")
 									{
 										Windows[Window].Buttons[cB].x = Windows[Window].width - 44.5;
-									} else if(Windows[Window].Buttons[cB].action == "close")
+									}
+									if(Windows[Window].Buttons[cB].action == "close")
 									{
-										Windows[Window].Buttons[cB].x = Windows[Window].width - 43.5;
+										Windows[Window].Buttons[cB].x = Windows[Window].width - 25.5;
 									}
 								}
 							}
@@ -362,20 +329,8 @@
 		            		}
 		            	}
 
-		            	if(mX >= Windows[Window].x - 5 && mX <= Windows[Window].x + 5 && mY >= Windows[Window].y && mY <= Windows[Window].y + Windows[Window].height)
-						{
-							if(stretchLeft == true)
-				            {
-				            	stretchLeft = false;
-				            	console.log("Not stretching left");
-				            } else {
-								stretchLeft = true
-								currentX = Windows[Window].x;
-								currentWindow = parseInt(Window);
-								console.log("Stretch left");
-				            }
-						} 
-						else if(mX >= Windows[Window].x + Windows[Window].width - 5 && mX <= Windows[Window].x + Windows[Window].width + 5 && mY >= Windows[Window].y && mY <= Windows[Window].y + Windows[Window].height)
+		            	
+						if(mX >= Windows[Window].x + Windows[Window].width - 5 && mX <= Windows[Window].x + Windows[Window].width + 5 && mY >= Windows[Window].y && mY <= Windows[Window].y + Windows[Window].height)
 						{
 							if(stretchRight == true)
 				            {
