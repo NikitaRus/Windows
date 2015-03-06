@@ -130,13 +130,9 @@
 				}
 			}
 
-			function mouseHover(e)
+			function drawWindows(x, y)
 			{
-				mX = e.clientX + document.body.scrollLeft + document.documentElement.scrollLeft - fCvas.offsetLeft;
-            	mY = e.clientY + document.body.scrollTop + document.documentElement.scrollTop - fCvas.offsetLeft;
-
-
-            	fBox.clearRect(0, 0, 800, 600);
+				fBox.clearRect(0, 0, 800, 600);
 
             	for(Window in Windows)
             	{
@@ -144,21 +140,21 @@
             		{
             			if(Window == currentWindow)
             			{
-            				fBox.strokeRect(Windows[Window].x - (foundX - mX), Windows[Window].y - (foundY - mY), Windows[Window].width, Windows[Window].height);
+            				fBox.strokeRect(Windows[Window].x - (foundX - x), Windows[Window].y - (foundY - y), Windows[Window].width, Windows[Window].height);
 
 							fBox.fillStyle = background_color;
-							fBox.fillRect(Windows[Window].x + 1 - (foundX - mX), Windows[Window].y + 1 - (foundY - mY), Windows[Window].width - 2, Windows[Window].height - 2);
+							fBox.fillRect(Windows[Window].x + 1 - (foundX - x), Windows[Window].y + 1 - (foundY - y), Windows[Window].width - 2, Windows[Window].height - 2);
 
-		            		fBox.strokeText(Windows[Window].title, Windows[Window].x + 10 - (foundX - mX), Windows[Window].y + 18 - (foundY - mY));
-		            		fBox.strokeRect(Windows[Window].x - (foundX - mX), Windows[Window].y + 25 - (foundY - mY), Windows[Window].width, 1);
+		            		fBox.strokeText(Windows[Window].title, Windows[Window].x + 10 - (foundX - x), Windows[Window].y + 18 - (foundY - y));
+		            		fBox.strokeRect(Windows[Window].x - (foundX - x), Windows[Window].y + 25 - (foundY - y), Windows[Window].width, 1);
             				for(cB in Windows[Window].Buttons)
 							{
-								fBox.strokeRect(Windows[Window].x - (foundX - mX) + Windows[Window].Buttons[cB].x, Windows[Window].y - (foundY - mY) + Windows[Window].Buttons[cB].y, Windows[Window].Buttons[cB].width, Windows[Window].Buttons[cB].height);
+								fBox.strokeRect(Windows[Window].x - (foundX - x) + Windows[Window].Buttons[cB].x, Windows[Window].y - (foundY - y) + Windows[Window].Buttons[cB].y, Windows[Window].Buttons[cB].width, Windows[Window].Buttons[cB].height);
 								
 								fBox.fillStyle = Windows[Window].Buttons[cB].background;
-								fBox.fillRect(Windows[Window].x + 1 - (foundX - mX) + Windows[Window].Buttons[cB].x, Windows[Window].y + 1 - (foundY - mY) + Windows[Window].Buttons[cB].y, Windows[Window].Buttons[cB].width - 2, Windows[Window].Buttons[cB].height - 2);
+								fBox.fillRect(Windows[Window].x + 1 - (foundX - x) + Windows[Window].Buttons[cB].x, Windows[Window].y + 1 - (foundY - y) + Windows[Window].Buttons[cB].y, Windows[Window].Buttons[cB].width - 2, Windows[Window].Buttons[cB].height - 2);
 
-								fBox.strokeText(Windows[Window].Buttons[cB].label, Windows[Window].x - (foundX - mX) + Windows[Window].Buttons[cB].x+8, Windows[Window].y - (foundY - mY) + Windows[Window].Buttons[cB].y+12);
+								fBox.strokeText(Windows[Window].Buttons[cB].label, Windows[Window].x - (foundX - x) + Windows[Window].Buttons[cB].x+8, Windows[Window].y - (foundY - y) + Windows[Window].Buttons[cB].y+12);
 							}
 		            	} else {
 		            		fBox.strokeRect(Windows[Window].x, Windows[Window].y, Windows[Window].width, Windows[Window].height);
@@ -194,26 +190,26 @@
 							fBox.strokeText(Windows[Window].Buttons[cB].label, Windows[Window].x + Windows[Window].Buttons[cB].x+8, Windows[Window].y + Windows[Window].Buttons[cB].y+12);
 						}
 
-						if(mX >= Windows[Window].x - 5 && mX <= Windows[Window].x + 5 && mY >= Windows[Window].y && mY <= Windows[Window].y + Windows[Window].height ||
-							mX >= Windows[Window].x + Windows[Window].width - 5 && mX <= Windows[Window].x + Windows[Window].width + 5 && mY >= Windows[Window].y && mY <= Windows[Window].y + Windows[Window].height)
+						if(x >= Windows[Window].x - 5 && x <= Windows[Window].x + 5 && y >= Windows[Window].y && y <= Windows[Window].y + Windows[Window].height ||
+							x >= Windows[Window].x + Windows[Window].width - 5 && x <= Windows[Window].x + Windows[Window].width + 5 && y >= Windows[Window].y && y <= Windows[Window].y + Windows[Window].height)
 						{
-							fBox.strokeRect(mX, mY, 10, 2);
+							fBox.strokeRect(x-10, y, 20, 2);
 						} 
-						else if(mY >= Windows[Window].y + Windows[Window].height - 5 && mY <= Windows[Window].y + Windows[Window].height + 5 && mX >= Windows[Window].x && mY <= Windows[Window].x + Windows[Window].width)
+						else if(y >= Windows[Window].y + Windows[Window].height - 5 && y <= Windows[Window].y + Windows[Window].height + 5 && x >= Windows[Window].x && x <= Windows[Window].x + Windows[Window].width)
 						{
-							fBox.strokeRect(mX, mY, 2, 10);
+							fBox.strokeRect(x, y-10, 2, 20);
 						}
 
 						if(Window == currentWindow)
 						{
 							if(stretchBottom == true)
 							{
-								Windows[Window].height = Windows[Window].height + (mY - (Windows[Window].y + Windows[Window].height));
+								Windows[Window].height = Windows[Window].height + (y - (Windows[Window].y + Windows[Window].height));
 							}
 
 							if(stretchRight == true)
 							{
-								Windows[Window].width = Windows[Window].width + (mX - (Windows[Window].x + Windows[Window].width));
+								Windows[Window].width = Windows[Window].width + (x - (Windows[Window].x + Windows[Window].width));
 
 								for(cB in Windows[Window].Buttons)
 								{
@@ -237,7 +233,16 @@
 					fBox.strokeText(MinimizedButtons[Mini].title, MinimizedButtons[Mini].x + 10, MinimizedButtons[Mini].y+18);
 				}
 
-            	fBox.strokeRect(mX, mY, 5, 5);
+            	fBox.strokeRect(x, y, 5, 5);
+			}
+
+			function mouseHover(e)
+			{
+				mX = e.clientX + document.body.scrollLeft + document.documentElement.scrollLeft - fCvas.offsetLeft;
+            	mY = e.clientY + document.body.scrollTop + document.documentElement.scrollTop - fCvas.offsetLeft;
+
+            	drawWindows(mX, mY);
+            	
 			}
 
 			var foundX, foundY;
@@ -343,7 +348,7 @@
 								console.log("Stretch right");
 				            }
 						}
-						else if(mY >= Windows[Window].y + Windows[Window].height - 5 && mY <= Windows[Window].y + Windows[Window].height + 5 && mX >= Windows[Window].x && mY <= Windows[Window].x + Windows[Window].width)
+						else if(mY >= Windows[Window].y + Windows[Window].height - 5 && mY <= Windows[Window].y + Windows[Window].height + 5 && mX >= Windows[Window].x && mX <= Windows[Window].x + Windows[Window].width)
 						{
 							if(stretchBottom == true)
 				            {
@@ -367,9 +372,9 @@
 	            			foundY = mY;
 
 	            			console.log("Found");
-	            			arraymove(Windows, parseInt(Window), Windows.length);
+	            			//arraymove(Windows, parseInt(Window), Windows.length);
 	            			choosen = true;
-	            			currentWindow = Windows.length -1;//parseInt(Window);
+	            			currentWindow = Window;//parseInt(Window);
 	            			console.log(currentWindow);
 	            			break;
 	            		} else {
