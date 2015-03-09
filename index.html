@@ -97,6 +97,14 @@
 			var stretchBottom = false;
 			var stretchRight = false;
 
+			var foundX, foundY; //used for stretching
+			var currentWindow = null;
+
+			Minimized = [];
+			MinimizedButtons = [];
+
+			background_color = "white";
+
 			$().ready(function () {
 				window.addEventListener("mousemove", mouseHover, false);
 				window.addEventListener("click", mouseClick, false);
@@ -130,7 +138,7 @@
 				}
 			}
 
-			function drawWindows(x, y)
+			function dragWindows(x, y)
 			{
 				fBox.clearRect(0, 0, 800, 600);
 
@@ -236,22 +244,53 @@
             	fBox.strokeRect(x, y, 5, 5);
 			}
 
+			function windowAction(window, action)
+			{
+				switch(tmpButton.action)
+				{
+					case "close":
+					delete Windows[window];
+					closed = true;
+					break;
+
+					case "minimize":
+					console.log("Minimizing")
+					MinimizedButton = {
+						x: 80*MinimizedButtons.length,
+						y: 560,
+						width: 80,
+						height: 30,
+						title: Windows[window].title
+					};
+
+					MinimizedButtons.push(MinimizedButton);
+					Minimized.push(Windows[window]);
+					delete Windows[window];
+					break;
+
+					case "color_red":
+					background_color = "red";
+					break;
+
+					case "color_blue":
+					background_color = "blue";
+					break;
+
+					case "color_green":
+					background_color = "green";
+					break;
+				}
+			}
+
+
 			function mouseHover(e)
 			{
 				mX = e.clientX + document.body.scrollLeft + document.documentElement.scrollLeft - fCvas.offsetLeft;
             	mY = e.clientY + document.body.scrollTop + document.documentElement.scrollTop - fCvas.offsetLeft;
 
-            	drawWindows(mX, mY);
+            	dragWindows(mX, mY);
             	
 			}
-
-			var foundX, foundY;
-			var currentWindow = null;
-
-			Minimized = [];
-			MinimizedButtons = [];
-
-			background_color = "white";
 
 			function mouseClick(e)
 			{
@@ -296,40 +335,7 @@
 
 		            			if(inRange(tmpButton, mX, mY) == true)
 		            			{
-		            				switch(tmpButton.action)
-		            				{
-		            					case "close":
-		            					console.log("Closing");
-		            					delete Windows[Window];
-		            					closed = true;
-		            					break;
-		            					case "minimize":
-		            					console.log("Minimizing")
-		            					MinimizedButton = {
-		            						x: 80*MinimizedButtons.length,
-		            						y: 560,
-		            						width: 80,
-		            						height: 30,
-		            						title: Windows[Window].title
-		            					};
-
-		            					MinimizedButtons.push(MinimizedButton);
-		            					Minimized.push(Windows[Window]);
-		            					delete Windows[Window];
-		            					break;
-
-		            					case "color_red":
-		            					background_color = "red";
-		            					break;
-
-		            					case "color_blue":
-		            					background_color = "blue";
-		            					break;
-
-		            					case "color_green":
-		            					background_color = "green";
-		            					break;
-		            				}
+		            				windowAction(Window, tmpButton.action)
 		            			}
 		            		}
 		            	}
