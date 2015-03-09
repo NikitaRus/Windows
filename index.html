@@ -1,6 +1,5 @@
 <html>
 	<head>
-		<script src="jquery.js"></script>
 		<script src="jscript.js"></script>
 	</head>
 	<body>
@@ -21,24 +20,14 @@
 
 			Windows = [];
 
-			function createWindow(x, y, width, height, title)
+			function newWindow(x, y, width, height, title)
 			{
-				var Window = {
-					x: x,
-					y: y,
-					width: width,
-					height: height,
-					title: title,
-					Buttons: []
-				}
-
-				for(Wnd in Windows)
-				{
-					if(Windows[Wnd].title == title)
-					{
-						return 0;
-					}
-				}
+				this.x = x;
+				this.y = y;
+				this.width = width;
+				this.height = height;
+				this.title = title;
+				this.Buttons = [];
 
 				var Button = {
 					x: width - 22.5,
@@ -50,7 +39,7 @@
 					background: "white"
 				}
 
-				Window.Buttons.push(Button)
+				this.Buttons.push(Button)
 
 				var Button = {
 					x: width - 44.5,
@@ -62,9 +51,7 @@
 					background: "white"
 				}
 
-				Window.Buttons.push(Button)
-
-				Windows.push(Window);
+				this.Buttons.push(Button)
 			}
 
 			function addButton(title, x, y, width, height, action, label, background)
@@ -87,8 +74,8 @@
 				}
 			}
 
-			createWindow(100, 100, 300, 450, "Window 1");
-			createWindow(350, 100, 300, 450, "Window 2");
+			Windows.push(new newWindow(100, 100, 300, 450, "Window 1"));
+			Windows.push(new newWindow(350, 100, 300, 450, "Window 2"));
 			addButton("Window 1", 22.5, 220, 50, 50, Functions.Color_blue, "Blue", "blue");
 			addButton("Window 1", 22.5, 100, 50, 50, Functions.Color_red, "Red", "red");
 			addButton("Window 1", 22.5, 160, 50, 50, Functions.Color_green, "Green", "green");
@@ -105,26 +92,24 @@
 
 			background_color = "white";
 
-			$().ready(function () {
-				window.addEventListener("mousemove", mouseHover, false);
-				window.addEventListener("click", mouseClick, false);
+			window.addEventListener("mousemove", mouseHover, false);
+			window.addEventListener("click", mouseClick, false);
 
-				for(Window in Windows)
+			for(Window in Windows)
+			{
+				for(cB in Windows[Window].Buttons)
 				{
-					for(cB in Windows[Window].Buttons)
-					{
-						fBox.strokeRect(Windows[Window].x + Windows[Window].Buttons[cB].x, Windows[Window].y + Windows[Window].Buttons[cB].y, Windows[Window].Buttons[cB].width, Windows[Window].Buttons[cB].height);
+					fBox.strokeRect(Windows[Window].x + Windows[Window].Buttons[cB].x, Windows[Window].y + Windows[Window].Buttons[cB].y, Windows[Window].Buttons[cB].width, Windows[Window].Buttons[cB].height);
 
-						fBox.fillStyle = Windows[Window].Buttons[cB].background;
-						fBox.fillRect(Windows[Window].x + Windows[Window].Buttons[cB].x + 1, Windows[Window].x + Windows[Window].Buttons[cB].y + 1, Windows[Window].Buttons[cB].width - 2, Windows[Window].Buttons[cB].height - 2);
+					fBox.fillStyle = Windows[Window].Buttons[cB].background;
+					fBox.fillRect(Windows[Window].x + Windows[Window].Buttons[cB].x + 1, Windows[Window].x + Windows[Window].Buttons[cB].y + 1, Windows[Window].Buttons[cB].width - 2, Windows[Window].Buttons[cB].height - 2);
 
-						fBox.strokeText(Windows[Window].Buttons[cB].label, Windows[Window].x + Windows[Window].Buttons[cB].x+8, Windows[Window].y + Windows[Window].Buttons[cB].y+12);
-					}
-					fBox.strokeRect(Windows[Window].x, Windows[Window].y, Windows[Window].width, Windows[Window].height);            		
-            		fBox.strokeText(Windows[Window].title, Windows[Window].x + 10, Windows[Window].y + 18);
-            		fBox.strokeRect(Windows[Window].x, Windows[Window].y + 25, Windows[Window].width, 1);
+					fBox.strokeText(Windows[Window].Buttons[cB].label, Windows[Window].x + Windows[Window].Buttons[cB].x+8, Windows[Window].y + Windows[Window].Buttons[cB].y+12);
 				}
-			});
+				fBox.strokeRect(Windows[Window].x, Windows[Window].y, Windows[Window].width, Windows[Window].height);            		
+        		fBox.strokeText(Windows[Window].title, Windows[Window].x + 10, Windows[Window].y + 18);
+        		fBox.strokeRect(Windows[Window].x, Windows[Window].y + 25, Windows[Window].width, 1);
+			}
 
 			function inRange(object1, x, y)
 			{
