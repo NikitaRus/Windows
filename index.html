@@ -28,6 +28,7 @@
 				this.height = height;
 				this.title = title;
 				this.Buttons = [];
+				this.Minimized = [];
 
 				var Button = {
 					x: width - 22.5,
@@ -67,8 +68,22 @@
 							height: height,
 							action: action,
 							label: label,
-							background: background
+							background: background,
+							value: "",
+							element: null
 						}
+
+						if(action == Functions.Text_input)
+						{
+							Button.element = document.createElement("textarea");
+							Button.element.style.position = "absolute";
+							Button.element.style.width = width;
+							Button.element.style.height = height;
+							Button.element.style.left = Windows[Window].x + x + 8;
+							Button.element.style.top = Windows[Window].y + y + 8;
+							document.body.appendChild(Button.element);
+						}
+
 						Windows[Window].Buttons.push(Button);
 					}
 				}
@@ -79,6 +94,7 @@
 			addButton("Window 1", 22.5, 220, 50, 50, Functions.Color_blue, "Blue", "blue");
 			addButton("Window 1", 22.5, 100, 50, 50, Functions.Color_red, "Red", "red");
 			addButton("Window 1", 22.5, 160, 50, 50, Functions.Color_green, "Green", "green");
+			addButton("Window 2", 5, 30, 5, 5, Functions.Text_input, "", "lightgreen");
 
 			var choosen = false;
 			var stretchBottom = false;
@@ -148,6 +164,14 @@
 								fBox.fillRect(Windows[Window].x + 1 - (foundX - x) + Windows[Window].Buttons[cB].x, Windows[Window].y + 1 - (foundY - y) + Windows[Window].Buttons[cB].y, Windows[Window].Buttons[cB].width - 2, Windows[Window].Buttons[cB].height - 2);
 
 								fBox.strokeText(Windows[Window].Buttons[cB].label, Windows[Window].x - (foundX - x) + Windows[Window].Buttons[cB].x+8, Windows[Window].y - (foundY - y) + Windows[Window].Buttons[cB].y+12);
+
+								if(Windows[Window].Buttons[cB].action == Functions.Text_input)
+								{
+									Windows[Window].Buttons[cB].element.style.width = Windows[Window].width;
+									Windows[Window].Buttons[cB].element.style.height = Windows[Window].height - 28;
+									Windows[Window].Buttons[cB].element.style.left = Windows[Window].x - (foundX - x) + 8;
+									Windows[Window].Buttons[cB].element.style.top = Windows[Window].y  - (foundY - y) + 35;
+								}
 							}
 		            	} else {
 		            		fBox.strokeRect(Windows[Window].x, Windows[Window].y, Windows[Window].width, Windows[Window].height);
@@ -165,6 +189,13 @@
 								fBox.fillRect(Windows[Window].x + Windows[Window].Buttons[cB].x + 1, Windows[Window].y + Windows[Window].Buttons[cB].y + 1, Windows[Window].Buttons[cB].width - 2, Windows[Window].Buttons[cB].height - 2);
 
 								fBox.strokeText(Windows[Window].Buttons[cB].label, Windows[Window].x + Windows[Window].Buttons[cB].x+8, Windows[Window].y + Windows[Window].Buttons[cB].y+12);
+								if(Windows[Window].Buttons[cB].action == Functions.Text_input)
+								{
+									Windows[Window].Buttons[cB].element.style.width = Windows[Window].width;
+									Windows[Window].Buttons[cB].element.style.height = Windows[Window].height - 28;
+									Windows[Window].Buttons[cB].element.style.left = Windows[Window].x + 8;
+									Windows[Window].Buttons[cB].element.style.top = Windows[Window].y + 35;
+								}
 							}
 		            	}
             		} else if(choosen == false) {
@@ -181,10 +212,17 @@
 							fBox.fillRect(Windows[Window].x + Windows[Window].Buttons[cB].x + 1, Windows[Window].y + Windows[Window].Buttons[cB].y + 1, Windows[Window].Buttons[cB].width - 2, Windows[Window].Buttons[cB].height - 2);
 
 							fBox.strokeText(Windows[Window].Buttons[cB].label, Windows[Window].x + Windows[Window].Buttons[cB].x+8, Windows[Window].y + Windows[Window].Buttons[cB].y+12);
+
+							if(Windows[Window].Buttons[cB].action == Functions.Text_input)
+							{
+								Windows[Window].Buttons[cB].element.style.width = Windows[Window].width;
+								Windows[Window].Buttons[cB].element.style.height = Windows[Window].height - 28;
+								Windows[Window].Buttons[cB].element.style.left = Windows[Window].x + 8;
+								Windows[Window].Buttons[cB].element.style.top = Windows[Window].y + 35;
+							}
 						}
 
-						if(x >= Windows[Window].x - 5 && x <= Windows[Window].x + 5 && y >= Windows[Window].y && y <= Windows[Window].y + Windows[Window].height ||
-							x >= Windows[Window].x + Windows[Window].width - 5 && x <= Windows[Window].x + Windows[Window].width + 5 && y >= Windows[Window].y && y <= Windows[Window].y + Windows[Window].height)
+						if(x >= Windows[Window].x + Windows[Window].width - 5 && x <= Windows[Window].x + Windows[Window].width + 5 && y >= Windows[Window].y && y <= Windows[Window].y + Windows[Window].height)
 						{
 							fBox.strokeRect(x-10, y, 20, 2);
 						} 
@@ -193,16 +231,53 @@
 							fBox.strokeRect(x, y-10, 2, 20);
 						}
 
+						if(x >= Windows[Window].x + Windows[Window].width - 5 && y >= Windows[Window].y + Windows[Window].height - 5 && x <= Windows[Window].x + Windows[Window].width + 5 && y <= Windows[Window].y + Windows[Window].height + 5)
+						{
+							fBox.strokeRect(x-10, y-10, 20, 20);	
+						}
+
 						if(Window == currentWindow)
 						{
 							if(stretchBottom == true)
 							{
 								Windows[Window].height = Windows[Window].height + (y - (Windows[Window].y + Windows[Window].height));
+
+								if(Windows[Window].height < 50)
+								{
+									Windows[Window].height = 50;
+								}
+
+								for(cB in Windows[Window].Buttons)
+								{
+									if(Windows[Window].y + Windows[Window].Buttons[cB].y + Windows[Window].Buttons[cB].height > y)
+									{
+										Windows[Window].Minimized.push(Windows[Window].Buttons[cB]);
+										delete Windows[Window].Buttons[cB];
+									}
+								}
+
+								for(mB in Windows[Window].Minimized)
+								{
+									if(Windows[Window].Minimized[mB])
+									{
+										if(Windows[Window].y + Windows[Window].Minimized[mB].y + Windows[Window].Minimized[mB].height < y)
+										{
+											console.log("Lower");
+											Windows[Window].Buttons.push(Windows[Window].Minimized[mB]);
+											delete Windows[Window].Minimized[mB];
+										}
+									}
+								}
 							}
 
 							if(stretchRight == true)
 							{
 								Windows[Window].width = Windows[Window].width + (x - (Windows[Window].x + Windows[Window].width));
+
+								if(Windows[Window].width < 100)
+								{
+									Windows[Window].width = 100;
+								}
 
 								for(cB in Windows[Window].Buttons)
 								{
@@ -325,8 +400,21 @@
 		            		}
 		            	}
 
-		            	
-						if(mX >= Windows[Window].x + Windows[Window].width - 5 && mX <= Windows[Window].x + Windows[Window].width + 5 && mY >= Windows[Window].y && mY <= Windows[Window].y + Windows[Window].height)
+		            	if(mX >= Windows[Window].x + Windows[Window].width - 5 && mX <= Windows[Window].x + Windows[Window].width + 5 && mY >= Windows[Window].y && mY <= Windows[Window].y + Windows[Window].height && mY >= Windows[Window].y + Windows[Window].height - 5 && mY <= Windows[Window].y + Windows[Window].height + 5 && mX >= Windows[Window].x && mX <= Windows[Window].x + Windows[Window].width)
+		            	{
+		            		if(stretchRight == true && stretchBottom == true)
+				            {
+				            	stretchRight = false;
+				            	stretchBottom = false;
+				            	console.log("Not stretching both");
+				            } else {
+								stretchRight = true
+								stretchBottom = true;
+								currentWindow = parseInt(Window);
+								console.log("stretching both");
+				            }	
+		            	}
+						else if(mX >= Windows[Window].x + Windows[Window].width - 5 && mX <= Windows[Window].x + Windows[Window].width + 5 && mY >= Windows[Window].y && mY <= Windows[Window].y + Windows[Window].height)
 						{
 							if(stretchRight == true)
 				            {
@@ -334,7 +422,6 @@
 				            	console.log("Not stretching right");
 				            } else {
 								stretchRight = true
-								currentX = Windows[Window].x;
 								currentWindow = parseInt(Window);
 								console.log("Stretch right");
 				            }

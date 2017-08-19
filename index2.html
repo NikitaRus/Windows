@@ -1,0 +1,227 @@
+<html>
+	<head>
+	</head>
+	<body>
+		<script>
+			Windows = [];
+			MinimizedWindows = [];
+
+			function inRange(object1, x, y)
+			{
+				if(object1 && x && y)
+				{
+					if(x >= object1.firstX && x <= object1.firstX + object1.width && y >= object1.firstY && y <= object1.firstY + 25)
+					{
+						return true;
+					}	
+				}
+			}
+
+			function newWindow(x, y , width, height, title)
+			{
+				this.x = x;
+				this.y = y;
+				this.firstX = x;
+				this.firstY = y;
+				this.width = width;
+				this.height = height;
+				this.title = title;
+				this.buttons = [];
+				this.element = document.createElement("div");
+
+				this.element.id = title;
+				
+				this.element.style.position = "absolute";
+				this.element.style.width = width;
+				this.element.style.height = height;
+				this.element.style.left = x;
+				this.element.style.top = y;
+				this.element.style.zindex = 1;
+				this.element.style.border = "solid 1px";
+
+				this.titlebar = document.createElement("div");
+				this.titlebar.style.position = "relative";
+				this.titlebar.style.width = width;
+				this.titlebar.style.height = "30px";
+				this.titlebar.style.border = "solid 1px";
+				this.titlebar.style.left = "-1px";
+				this.titlebar.style.display = "-webkit-box";
+
+				this.element.appendChild(this.titlebar);
+
+				this.choosen = false;
+				this.foundX = 0;
+				this.foundY = 0;
+
+
+				var button1 = new newButton(this.width - 26, 4, 20, 20, "X", "Close", "white");
+
+				var label = document.createElement("p");
+				label.style.position = "relative";
+				label.style.left = "4px";
+				label.style.top = "-14px";
+				label.style.lineheight = "0%";
+				label.innerHTML = button1.label;
+
+				button1.element.appendChild(label);
+
+
+				this.buttons.push(button1);
+				this.titlebar.appendChild(button1.element);
+
+
+
+				var button2 = new newButton(this.width - 76, 4, 20, 20, "_", "Minimize", "white");
+
+				var label = document.createElement("p");
+				label.style.position = "relative";
+				label.style.left = "4px";
+				label.style.top = "-14px";
+				label.style.lineheight = "0%";
+				label.innerHTML = button2.label;
+
+				button2.element.appendChild(label);
+
+
+				this.buttons.push(button2);
+				this.titlebar.appendChild(button2.element);
+			}
+
+			function newButton(x, y, width, height, label, action, color)
+			{
+				this.x = x;
+				this.y = y;
+				this.firstX = x;
+				this.firstY = y;
+				this.width = width;
+				this.height = height;
+				this.label = label;
+				this.action = action;
+				this.color = color;
+
+				this.element = document.createElement("div");
+				this.element.style.position = "relative";
+				this.element.style.left = x;
+				this.element.style.top = y;
+				this.element.style.width = width;
+				this.element.style.height = height;
+				this.element.style.border = "solid 1px";
+			}
+
+			function addButton(title, button)
+			{
+				for(Wnd in Windows)
+				{
+					if(Windows[Wnd].title == title)
+					{
+						var label = document.createElement("p");
+						label.style.position = "absolute";
+						label.style.left = "6px";
+						label.style.top = "-6px";
+						label.style.lineheight = "0%";
+						label.innerHTML = button.label;
+
+						button.element.appendChild(label);
+
+
+						Windows[Wnd].buttons.push(button);
+						Windows[Wnd].titlebar.appendChild(button.element);
+					}
+				}
+			}
+
+			Windows.push(new newWindow(10, 10, 200, 300, "Title 1"));
+			Windows.push(new newWindow(270, 70, 200, 300, "Title 2"));
+			//addButton("Title 1", new newButton(0, 0, 28, 28, "X", "Close", "white"));
+
+
+			for(Wnd in Windows)
+			{
+				document.body.appendChild(Windows[Wnd].element);
+			}
+
+			function windowAction(action, window)
+			{
+				switch(action)
+				{
+					case "Close":
+						var elem = document.getElementById(Windows[window].element.id);
+	    				elem.parentNode.removeChild(elem);
+	    				delete Windows[window];
+						break;
+
+					case "Minimize":
+
+				}
+			}
+
+			function mouseHover(e)
+			{
+				mX = e.clientX + document.body.scrollLeft + document.documentElement.scrollLeft;
+            	mY = e.clientY + document.body.scrollTop + document.documentElement.scrollTop;
+
+            	for(Wnd in Windows)
+            	{
+            		if(Windows[Wnd].choosen == true)
+            		{
+            			//fBox.strokeRect(Windows[Window].x - (foundX - x), Windows[Window].y + 25 - (foundY - y), Windows[Window].width, 1);
+            			console.log(Windows[Wnd].x);
+            			Windows[Wnd].firstX = Windows[Wnd].x - (Windows[Wnd].foundX - mX);
+            			Windows[Wnd].firstY = Windows[Wnd].y - (Windows[Wnd].foundY - mY);
+            			Windows[Wnd].element.style.left = Windows[Wnd].firstX;
+            			Windows[Wnd].element.style.top = Windows[Wnd].firstY;
+            		}
+            	}
+			}
+
+			function mouseClick(e)
+			{
+				mX = e.clientX + document.body.scrollLeft + document.documentElement.scrollLeft;
+            	mY = e.clientY + document.body.scrollTop + document.documentElement.scrollTop;
+
+            	for(Wnd in Windows)
+            	{
+            		var buttonFound = false;
+            		for(Btn in Windows[Wnd].buttons)
+    				{
+    					tmpButton = {
+    						firstX: Windows[Wnd].buttons[Btn].x + Windows[Wnd].x,
+    						firstY: Windows[Wnd].buttons[Btn].y + Windows[Wnd].y,
+    						width: Windows[Wnd].buttons[Btn].width,
+    						height: Windows[Wnd].buttons[Btn].height
+    					}
+    					console.log("Button" + tmpButton.x);
+
+    					if(inRange(tmpButton, mX, mY))
+    					{
+    						windowAction(Windows[Wnd].buttons[Btn].action, Wnd);
+    						buttonFound = true;
+    					}
+    				}
+            		if(inRange(Windows[Wnd], mX, mY) && !buttonFound)
+            		{
+            			if(Windows[Wnd].choosen == false)
+            			{
+            				Windows[Wnd].choosen = true;
+            				console.log(Windows[Wnd]);
+            			} else {
+            				Windows[Wnd].choosen = false;
+            				Windows[Wnd].x = Windows[Wnd].x - (Windows[Wnd].foundX - mX);
+            				Windows[Wnd].y = Windows[Wnd].y - (Windows[Wnd].foundY - mY);
+            				Windows[Wnd].firstX = Windows[Wnd].x;
+            				Windows[Wnd].firstY = Windows[Wnd].y;
+            				console.log(Windows[Wnd]);
+            			}
+
+            			Windows[Wnd].foundX = mX;
+            			Windows[Wnd].foundY = mY;
+            		}
+            	}
+			}
+
+			window.addEventListener("mousemove", mouseHover, false);
+			window.addEventListener("click", mouseClick, false);
+
+		</script>
+	</body>
+</html>
