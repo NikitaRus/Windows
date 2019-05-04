@@ -1,6 +1,9 @@
 <html>
 	<head>
+		<script src="jquery.js"></script>
 	</head>
+
+
 	<body>
 		<script>
 			Windows = [];
@@ -15,6 +18,42 @@
 						return true;
 					}	
 				}
+			}
+
+			function minimizedWindow(x, y , width, height, title)
+			{
+				this.x = x;
+				this.y = y;
+				this.firstX = x;
+				this.firstY = y;
+				this.width = width;
+				this.height = height;
+				this.title = title;
+				this.element = document.createElement("div");
+
+				this.element.id = title + "Minimized";
+				
+				this.element.style.position = "absolute";
+				this.element.style.width = width;
+				this.element.style.height = height;
+				this.element.style.left = x;
+				this.element.style.top = y;
+				this.element.style.zindex = 1;
+				this.element.style.border = "solid 1px";
+
+				this.titlebar = document.createElement("div");
+				this.titlebar.style.position = "relative";
+				this.titlebar.style.width = width;
+				this.titlebar.style.height = "30px";
+				this.titlebar.style.border = "solid 1px";
+				this.titlebar.style.left = "-1px";
+				this.titlebar.style.display = "-webkit-box";
+
+				this.element.appendChild(this.titlebar);
+
+				this.choosen = false;
+				this.foundX = 0;
+				this.foundY = 0;	
 			}
 
 			function newWindow(x, y , width, height, title)
@@ -38,6 +77,7 @@
 				this.element.style.top = y;
 				this.element.style.zindex = 1;
 				this.element.style.border = "solid 1px";
+				this.element.style.background = "lightgrey";
 
 				this.titlebar = document.createElement("div");
 				this.titlebar.style.position = "relative";
@@ -47,6 +87,14 @@
 				this.titlebar.style.left = "-1px";
 				this.titlebar.style.display = "-webkit-box";
 
+				this.title = document.createElement("h3");
+				this.title.innerHTML = title;
+				this.title.style.position = "absolute";
+    			this.title.style.top = "-6px";
+    			this.title.style.left = "4px";
+    			this.title.style.fontSize = "10pt";
+
+				this.titlebar.appendChild(this.title);
 				this.element.appendChild(this.titlebar);
 
 				this.choosen = false;
@@ -130,8 +178,8 @@
 				}
 			}
 
-			Windows.push(new newWindow(10, 10, 200, 300, "Title 1"));
-			Windows.push(new newWindow(270, 70, 200, 300, "Title 2"));
+			Windows.push(new newWindow(10, 10, 200, 300, "Ventana Uno"));
+			Windows.push(new newWindow(270, 70, 200, 300, "Ventana Dos"));
 			//addButton("Title 1", new newButton(0, 0, 28, 28, "X", "Close", "white"));
 
 
@@ -140,17 +188,33 @@
 				document.body.appendChild(Windows[Wnd].element);
 			}
 
+
+			var quantityOfMinimized = 0;
+
 			function windowAction(action, window)
 			{
 				switch(action)
 				{
 					case "Close":
+						console.log("Close ventana: " + Windows[window].element.id);
 						var elem = document.getElementById(Windows[window].element.id);
 	    				elem.parentNode.removeChild(elem);
 	    				delete Windows[window];
 						break;
 
 					case "Minimize":
+						console.log("Minimize ventana: " + Windows[window].element.id);
+						var elem = document.getElementById(Windows[window].element.id);
+						console.log(window.innerHeight);
+						MinimizedWindows.push(new minimizedWindow(10 + (quantityOfMinimized * 200), document.documentElement.clientHeight - 40, 180, 30, elem.title.title));
+						console.log("Altura: " + document.documentElement.clientHeight);
+	    				elem.parentNode.removeChild(elem);
+						quantityOfMinimized += 1;
+	    				for(MWnd in MinimizedWindows) {
+	    					var elem = document.getElementById(MinimizedWindows[MWnd].element.id);
+	    					document.body.appendChild(MinimizedWindows[MWnd].element);
+	    				}
+	    				break;
 
 				}
 			}
@@ -174,6 +238,9 @@
             	}
 			}
 
+
+			var windowChoosen = false;
+
 			function mouseClick(e)
 			{
 				mX = e.clientX + document.body.scrollLeft + document.documentElement.scrollLeft;
@@ -182,30 +249,52 @@
             	for(Wnd in Windows)
             	{
             		var buttonFound = false;
-            		for(Btn in Windows[Wnd].buttons)
+            		for (Btn in Windows[Wnd].buttons)
     				{
-    					tmpButton = {
-    						firstX: Windows[Wnd].buttons[Btn].x + Windows[Wnd].x,
-    						firstY: Windows[Wnd].buttons[Btn].y + Windows[Wnd].y,
-    						width: Windows[Wnd].buttons[Btn].width,
-    						height: Windows[Wnd].buttons[Btn].height
-    					}
-    					console.log("Button" + tmpButton.x);
-
-    					if(inRange(tmpButton, mX, mY))
+    					if(Windows[Wnd])
     					{
-    						windowAction(Windows[Wnd].buttons[Btn].action, Wnd);
-    						buttonFound = true;
-    					}
+	    					tmpButton = {
+	    						firstX: Windows[Wnd].buttons[Btn].x + Windows[Wnd].x,
+	    						firstY: Windows[Wnd].buttons[Btn].y + Windows[Wnd].y,
+	    						width: Windows[Wnd].buttons[Btn].width,
+	    						height: Windows[Wnd].buttons[Btn].height,
+	    						action: Windows[Wnd].buttons[Btn].action
+	    					}
+
+	    					console.log(Windows[Wnd].buttons[Btn]);
+
+	    					if(tmpButton.action == "Minimize")
+	    					{
+	    						if(inRange(tmpButton, mX - 30, mY))
+		    					{
+		    						console.log("Boton encontrado: " + buttonFound + " accion " + Windows[Wnd].buttons[Btn].action);
+		    						windowAction(Windows[Wnd].buttons[Btn].action, Wnd);
+		    						buttonFound = true;
+		    					}
+	    					} else if tmpButton.action == "Close" {
+	    						if(inRange(tmpButton, mX, mY))
+		    					{
+		    						console.log("Boton encontrado: " + buttonFound + " accion " + Windows[Wnd].buttons[Btn].action);
+		    						windowAction(Windows[Wnd].buttons[Btn].action, Wnd);
+		    						buttonFound = true;
+		    					}
+	    					}
+	    				} else {
+	    					break;
+	    				}
     				}
             		if(inRange(Windows[Wnd], mX, mY) && !buttonFound)
             		{
             			if(Windows[Wnd].choosen == false)
             			{
-            				Windows[Wnd].choosen = true;
-            				console.log(Windows[Wnd]);
+            				if(!windowChoosen) {
+	            				Windows[Wnd].choosen = true;
+	            				windowChoosen = true;
+	            				console.log(Windows[Wnd]);
+	            			}
             			} else {
             				Windows[Wnd].choosen = false;
+            				windowChoosen = false;
             				Windows[Wnd].x = Windows[Wnd].x - (Windows[Wnd].foundX - mX);
             				Windows[Wnd].y = Windows[Wnd].y - (Windows[Wnd].foundY - mY);
             				Windows[Wnd].firstX = Windows[Wnd].x;
